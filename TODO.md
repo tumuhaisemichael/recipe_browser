@@ -1,0 +1,1 @@
+- [ ] Replace the content of `lib/screens/recipe_list_screen.dart` with a proper `RecipeListScreen` class that displays a list of recipes using existing widgets like `SearchBar`, `CategoryFilter`, and `RecipeCard`, integrated with the `recipeProvider`.
