@@ -9,6 +9,8 @@ import '../widgets/category_filter.dart';
 import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart';
 import 'favorites_screen.dart';
+import 'welcome_screen.dart';
+import 'categories_screen.dart';
 
 class RecipeListScreen extends ConsumerStatefulWidget {
   const RecipeListScreen({super.key});
@@ -40,11 +42,6 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
   Widget build(BuildContext context) {
     final recipeState = ref.watch(recipeProvider);
     final categoriesAsync = ref.watch(categoriesProvider);
-    final favoriteIds = ref.watch(favoritesProvider);
-    final favoriteRecipes =
-        recipeState.recipes
-            .where((recipe) => favoriteIds.contains(recipe.id))
-            .toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFf8f7f6), // background-light
@@ -57,8 +54,6 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
             _buildSearchBar(),
             // Categories Section
             _buildCategoriesSection(categoriesAsync),
-            // Favorites Section
-            _buildFavoritesSection(favoriteRecipes),
             // Recipes List Section
             _buildRecipesList(recipeState),
           ],
@@ -92,7 +87,13 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
             child: IconButton(
               icon: const Icon(Icons.logout, color: Color(0xFFec6d13)),
               onPressed: () {
-                // Handle logout
+                // Navigate to welcome screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WelcomeScreen(),
+                  ),
+                );
               },
             ),
           ),
@@ -145,14 +146,37 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Categories',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF221810), // background-dark
-              fontFamily: 'Epilogue',
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF221810), // background-dark
+                  fontFamily: 'Epilogue',
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CategoriesScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'See All',
+                  style: TextStyle(
+                    color: Color(0xFFec6d13),
+                    fontFamily: 'Epilogue',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           categoriesAsync.when(
@@ -209,73 +233,6 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
                   height: 40,
                   child: Center(child: Text('Failed to load categories')),
                 ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFavoritesSection(List<Recipe> favoriteRecipes) {
-    if (favoriteRecipes.isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Favorites',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF221810),
-              fontFamily: 'Epilogue',
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: favoriteRecipes.length,
-              itemBuilder: (context, index) {
-                final recipe = favoriteRecipes[index];
-                return Container(
-                  width: 160,
-                  margin: const EdgeInsets.only(right: 16),
-                  child: Column(
-                    children: [
-                      // Recipe Image
-                      Container(
-                        width: 160,
-                        height: 160 * 4 / 3, // aspect ratio 3:4
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: NetworkImage(recipe.thumbnail),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Recipe Name
-                      Text(
-                        recipe.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF221810),
-                          fontFamily: 'Epilogue',
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -374,7 +331,6 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
               _buildNavItem(Icons.home, 'Home', 0, true),
               _buildNavItem(Icons.favorite, 'Favorites', 1, false),
               _buildNavItem(Icons.category, 'Categories', 2, false),
-              _buildNavItem(Icons.person, 'Profile', 3, false),
             ],
           ),
         ),
@@ -389,11 +345,19 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
           _currentIndex = index;
         });
         if (index == 1) {
+          // Navigate to Favorites screen
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const FavoritesScreen()),
           );
+        } else if (index == 2) {
+          // Navigate to Categories screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+          );
         }
+        // Index 0 (Home) stays on current screen
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
