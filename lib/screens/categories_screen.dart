@@ -6,6 +6,7 @@ import '../providers/category_provider.dart';
 import '../providers/recipe_provider.dart';
 import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart';
+import 'recipe_list_screen.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
@@ -95,7 +96,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           // Load recipes for this category when overlay opens
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (recipeState.recipes.isEmpty ||
-                                _selectedCategory != category.name) {
+                                (recipeState.recipes.isNotEmpty &&
+                                    recipeState.recipes.first.category !=
+                                        category.name)) {
                               ref
                                   .read(recipeProvider.notifier)
                                   .filterByCategory(category.name);
@@ -262,7 +265,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       color: Color(0xFFec6d13),
                     ),
                     onTap: () {
-                      _showCategoryRecipesOverlay(context, category);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  RecipeListScreen(categoryName: category.name),
+                        ),
+                      );
                     },
                   ),
                 );

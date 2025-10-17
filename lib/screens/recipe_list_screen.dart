@@ -13,7 +13,9 @@ import 'welcome_screen.dart';
 import 'categories_screen.dart';
 
 class RecipeListScreen extends ConsumerStatefulWidget {
-  const RecipeListScreen({super.key});
+  final String? categoryName;
+
+  const RecipeListScreen({super.key, this.categoryName});
 
   @override
   ConsumerState<RecipeListScreen> createState() => _RecipeListScreenState();
@@ -28,7 +30,13 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
     super.initState();
     // Load some initial recipes when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(recipeProvider.notifier).loadFeaturedRecipes();
+      if (widget.categoryName != null) {
+        ref
+            .read(recipeProvider.notifier)
+            .filterByCategory(widget.categoryName!);
+      } else {
+        ref.read(recipeProvider.notifier).loadFeaturedRecipes();
+      }
     });
   }
 

@@ -1,30 +1,43 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_browser_app/main.dart';
+import 'package:recipe_browser_app/screens/welcome_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App starts with WelcomeScreen', (WidgetTester tester) async {
+    await tester.pumpWidget(const ProviderScope(child: MyApp()));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that WelcomeScreen is shown
+    expect(find.text('Recipe Browser'), findsOneWidget);
+    expect(find.text('Discover delicious recipes'), findsOneWidget);
+    expect(find.text('Start Browsing'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('WelcomeScreen has correct UI elements', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: WelcomeScreen()));
+
+    // Check for main elements
+    expect(find.byIcon(Icons.restaurant_menu), findsOneWidget);
+    expect(find.text('Recipe Browser'), findsOneWidget);
+    expect(find.text('Start Browsing'), findsOneWidget);
+    expect(find.byType(ElevatedButton), findsOneWidget);
+  });
+
+  testWidgets('Start Browsing button exists and is tappable', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: WelcomeScreen()));
+
+    // Find the button
+    final button = find.text('Start Browsing');
+    expect(button, findsOneWidget);
+
+    // Verify it's tappable (though we won't navigate in test)
+    await tester.tap(button);
     await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // In a full test, we'd verify navigation
   });
 }
