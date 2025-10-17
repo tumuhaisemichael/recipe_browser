@@ -71,7 +71,7 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Recipe Finder',
+            'Recipe Browser',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

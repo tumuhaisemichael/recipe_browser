@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         // Title
                         const Text(
-                          'Recipe Finder',
+                          'Recipe Browser',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
